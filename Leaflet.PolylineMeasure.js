@@ -377,7 +377,8 @@
     		  self._mapdragging = true
     	    })
             this._container = document.createElement('div');
-            this._container.classList.add('leaflet-bar measure-control');
+            this._container.classList.add('leaflet-bar');
+            this._container.classList.add('measure-control');
             L.DomEvent.disableClickPropagation(this._container); // otherwise drawing process would instantly start at controls' container or double click would zoom-in map
             var title = this.options.measureControlTitleOn;
             var label = this.options.measureControlLabel;
