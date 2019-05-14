@@ -375,7 +375,7 @@
             // needed to avoid creating points by mouseclick during dragging the map
     	    map.on('movestart ', function() {
     		  self._mapdragging = true
-    	    })
+    	    });
             this._container = document.createElement('div');
             this._container.classList.add('leaflet-bar');
             this._container.classList.add('measure-control'); //Class for proper vertical alignment (in top-left corner)
@@ -493,8 +493,10 @@
                     this._finishPolylinePath();
                 }
             }
+
             // allow easy to connect the measure control to the app, f.e. to disable the selection on the map when the measurement is turned on
             this._map.fire('polylinemeasure:toggle', {sttus: this._measuring});
+            return this._measuring;
         },
 
         /**
