@@ -335,7 +335,8 @@
                  * @default
                  */
                 radius: 3
-            }
+            },
+            pane: ''
         },
 
         _arcpoints: 100,  // 100 points = 99 line segments. lower value to make arc less accurate or increase value to make it more accurate.
@@ -400,7 +401,8 @@
                     classes.push(_unicodeClass);
                 }
                 this._clearMeasureControl = this._createControl (label, title, classes, this._container, this._clearAllMeasurements, this);
-                this._clearMeasureControl.classList.add('polyline-measure-clearControl')
+                this._clearMeasureControl.classList.add('polyline-measure-clearControl');
+                this._clearMeasureControl.classList.add('hide-control');
             }
             if (this.options.showUnitControl) {
                 if (this.options.unit == "metres") {
@@ -416,6 +418,7 @@
                 var classes = [];
                 this._unitControl = this._createControl (label, title, classes, this._container, this._changeUnit, this);
                 this._unitControl.setAttribute ('id', 'unitControlId');
+                this._unitControl.classList.add('hide-control');
             }
             return this._container;
         },
@@ -468,6 +471,14 @@
                 this._map.on ('mousemove', this._mouseMove, this);   //  enable listing to 'mousemove', 'click', 'keydown' events
                 this._map.on ('click', this._mouseClick, this);
                 L.DomEvent.on (document, 'keydown', this._onKeyDown, this);
+                if (this._clearMeasureControl) {
+                    this._clearMeasureControl.classList = [];
+                }
+                if (this._unitControl) {
+                    this._unitControl.classList = [];
+                    console.log('Holiii');
+                    console.log(this._unitControl);
+                }
                 this._resetPathVariables();
             } else {   // if measuring is going to be switched off
                 this._unblockEvents();
@@ -492,11 +503,16 @@
                 if (this._cntCircle !== 0) {
                     this._finishPolylinePath();
                 }
-            }
+                if (this.options.showClearControl) {
+                    this._clearMeasureControl.classList.add('hide-control');
+                }
+                if (this.options.showUnitControl) {
+                    this._unitControl.classList.add('hide-control');
+                }
 
+            }
             // allow easy to connect the measure control to the app, f.e. to disable the selection on the map when the measurement is turned on
             this._map.fire('polylinemeasure:toggle', {sttus: this._measuring});
-            return this._measuring;
         },
 
         /**
@@ -795,7 +811,8 @@
                 color: this.options.tempLine.color,
                 weight: this.options.tempLine.weight,
                 interactive: false,
-                dashArray: '8,8'
+                dashArray: '8,8',
+                pane: this.options.pane
             }).addTo(this._layerPaint).bringToBack();
 
             var polylineState = this;   // use "polylineState" instead of "this" to allow measuring on 2 different maps the same time
@@ -812,7 +829,8 @@
                     // Style of fixed, polyline after mouse is clicked
                     color: this.options.fixedLine.color,
                     weight: this.options.fixedLine.weight,
-                    interactive: false
+                    interactive: false,
+                    pane: this.options.pane
                 }).addTo(this._layerPaint).bringToBack(),
 
                 handleMarkers: function (latlng) {
@@ -969,7 +987,8 @@
                     color: this.options.tempLine.color,
                     weight: this.options.tempLine.weight,
                     interactive: false,
-                    dashArray: '8,8'
+                    dashArray: '8,8',
+                    pane: this.options.pane
                 }).addTo(this._layerPaint).bringToBack();
                 this._currentLine.tooltips.last()._icon.classList.remove ('polyline-measure-tooltip-end');   // remove extra CSS-class of previous, last tooltip
                 var tooltipNew = this._currentLine.getNewToolTip (e.latlng);
@@ -1186,7 +1205,8 @@
                         color: this.options.tempLine.color,
                         weight: this.options.tempLine.weight,
                         interactive: false,
-                        dashArray: '8,8'
+                        dashArray: '8,8',
+                        pane: this.options.pane
                     }).addTo(this._layerPaint).bringToBack();
                     this._tooltipNew = L.marker (currentCircleCoords, {
                         icon: L.divIcon({
