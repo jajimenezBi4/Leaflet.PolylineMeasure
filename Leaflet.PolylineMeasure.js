@@ -476,8 +476,6 @@
                 }
                 if (this._unitControl) {
                     this._unitControl.classList = [];
-                    console.log('Holiii');
-                    console.log(this._unitControl);
                 }
                 this._resetPathVariables();
             } else {   // if measuring is going to be switched off
