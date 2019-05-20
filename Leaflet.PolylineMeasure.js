@@ -455,6 +455,7 @@
         _toggleMeasure: function () {
             this._measuring = !this._measuring;
             if (this._measuring) {   // if measuring is going to be switched on
+                this._clearAllMeasurements();
                 this._mapdragging = false;
                 this._blockEvents();
                 this._measureControl.classList.add ('polyline-measure-controlOnBgColor');
