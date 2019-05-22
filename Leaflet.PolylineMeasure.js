@@ -372,7 +372,8 @@
          * @returns {Element}           Containing element
          */
         onAdd: function(map) {
-            var self = this
+
+            var self = this;
             // needed to avoid creating points by mouseclick during dragging the map
     	    map.on('movestart ', function() {
     		  self._mapdragging = true
@@ -785,6 +786,9 @@
         _mouseMove: function (e) {
             var mouseCoords = e.latlng;
             this._map.on ('click', this._mouseClick, this);  // necassary for _dragCircle. If switched on already within _dragCircle an unwanted click is fired at the end of the drag.
+            this._map.on ('mouseover', this._mouseClick, this);
+            this._map.on ('mousedown', this._mouseClick, this);
+            this._map.on ('mouseout', this._mouseClick, this);
             if(!mouseCoords || !this._currentLine) {
                 return;
             }
@@ -947,18 +951,31 @@
          * @private
          */
         _mouseClick: function (e) {
+            var controlPosition = this._measureControl.getBoundingClientRect();
+            console.log('Control position');
+            console.log(controlPosition);
+
+            var clickedOnControl = false;
+            console.log('Event');
+            console.log(e);
+            // L.DomEvent.disableClickPropagation(this._container);
             // skip if there are no coords provided by the event, or this event's screen coordinates match those of finishing CircleMarker for the line we just completed
             if (!e.latlng || (this._finishCircleScreencoords && this._finishCircleScreencoords.equals(e.containerPoint))) {
+                console.log('If A');
                 return;
             }
 
             if (!this._currentLine && !this._mapdragging) {
+                console.log('If B');
                 this._startLine (e.latlng);
+
             }
             // just create a point if the map isn't dragged during the mouseclick.
             if (!this._mapdragging) {
+                console.log('If C');
                 this._currentLine.addPoint (e.latlng);
             } else {
+                console.log('Else D');
                 this._mapdragging = false; // this manual setting to "false" needed, instead of a "moveend"-Event. Cause the mouseclick of a "moveend"-event immediately would create a point too the same time.
             }
         },
