@@ -372,10 +372,10 @@
          * @returns {Element}           Containing element
          */
         onAdd: function(map) {
-            var self = this
+            var self = this;
             // needed to avoid creating points by mouseclick during dragging the map
     	    map.on('movestart ', function() {
-    		  self._mapdragging = true
+    		  self._mapdragging = true;
     	    });
             this._container = document.createElement('div');
             this._container.classList.add('leaflet-bar');
@@ -394,9 +394,9 @@
             this._defaultControlBgColor = this._measureControl.style.backgroundColor;
             this._measureControl.setAttribute('id', _measureControlId);
             if (this.options.showClearControl) {
-                var title = this.options.clearControlTitle;
-                var label = this.options.clearControlLabel;
-                var classes = this.options.clearControlClasses;
+                title = this.options.clearControlTitle;
+                label = this.options.clearControlLabel;
+                classes = this.options.clearControlClasses;
                 if (label.indexOf('&') != -1) {
                     classes.push(_unicodeClass);
                 }
@@ -406,16 +406,16 @@
             }
             if (this.options.showUnitControl) {
                 if (this.options.unit == "metres") {
-                    var label = this.options.unitControlLabel.metres;
-                    var title = this.options.unitControlTitle.text + " [" + this.options.unitControlTitle.metres  + "]";
+                    label = this.options.unitControlLabel.metres;
+                    title = this.options.unitControlTitle.text + " [" + this.options.unitControlTitle.metres  + "]";
                 }  else if  (this.options.unit == "landmiles") {
-                    var label = this.options.unitControlLabel.landmiles;
-                    var title = this.options.unitControlTitle.text + " [" + this.options.unitControlTitle.landmiles  + "]";
+                    label = this.options.unitControlLabel.landmiles;
+                    title = this.options.unitControlTitle.text + " [" + this.options.unitControlTitle.landmiles  + "]";
                 } else {
-                    var label = this.options.unitControlLabel.nauticalmiles;
-                    var title = this.options.unitControlTitle.text + " [" + this.options.unitControlTitle.nauticalmiles  + "]";
+                    label = this.options.unitControlLabel.nauticalmiles;
+                    title = this.options.unitControlTitle.text + " [" + this.options.unitControlTitle.nauticalmiles  + "]";
                 }
-                var classes = [];
+                classes = [];
                 this._unitControl = this._createControl (label, title, classes, this._container, this._changeUnit, this);
                 this._unitControl.setAttribute ('id', 'unitControlId');
                 this._unitControl.classList.add('hide-control');
@@ -584,12 +584,12 @@
                             var lastCircleCoords = this._arrPolylines[lineNr].circleCoords[index - 1];
                             var mouseCoords = this._arrPolylines[lineNr].circleCoords[index];
                             totalDistance += distance;
-                            var prevTooltip = this._arrPolylines[lineNr].tooltips[index-1]
+                            var prevTooltip = this._arrPolylines[lineNr].tooltips[index-1];
                             this._updateTooltip (item, prevTooltip, totalDistance, distance, lastCircleCoords, mouseCoords);
                         }
                     }.bind (this));
                     this._map.on ('mousemove', this._mouseMove, this);
-                    return
+                    return;
                 }
                 // if NOT drawing a line, ESC will directly switch of measuring
                 if (!this._currentLine) {
@@ -720,6 +720,7 @@
         _updateTooltip: function (currentTooltip, prevTooltip, total, difference, lastCircleCoords, mouseCoords) {
             // Explanation of formula: http://www.movable-type.co.uk/scripts/latlong.html
             calcAngle = function (p1, p2, direction) {
+                var brng;
                 var lat1 = p1.lat / 180 * Math.PI;
                 var lat2 = p2.lat / 180 * Math.PI;
                 var lng1 = p1.lng / 180 * Math.PI;
@@ -727,12 +728,12 @@
                 var y = Math.sin(lng2-lng1) * Math.cos(lat2);
                 var x = Math.cos(lat1)*Math.sin(lat2) - Math.sin(lat1)*Math.cos(lat2)*Math.cos(lng2-lng1);
                 if (direction === "inbound") {
-                    var brng = (Math.atan2(y, x) * 180 / Math.PI + 180).toFixed(0);
+                    brng = (Math.atan2(y, x) * 180 / Math.PI + 180).toFixed(0);
                 } else {
-                    var brng = (Math.atan2(y, x) * 180 / Math.PI + 360).toFixed(0);
+                    brng = (Math.atan2(y, x) * 180 / Math.PI + 360).toFixed(0);
                 }
                 return (brng % 360);
-            }
+            };
 
             var angleIn = calcAngle (mouseCoords, lastCircleCoords, "inbound");
             var angleOut = calcAngle (lastCircleCoords, mouseCoords, "outbound");
@@ -748,9 +749,9 @@
             textCurrent += '<div class="polyline-measure-tooltip-total">' + totalRound.value + '&nbsp;' +  totalRound.unit + '</div>';
             currentTooltip._icon.innerHTML = textCurrent;
             if ((this.options.showBearings === true) && (prevTooltip)) {
-                textPrev = prevTooltip._icon.innerHTML;
+                var textPrev = prevTooltip._icon.innerHTML;
                 var regExp = new RegExp(this.options.bearingTextOut + '.*\°');
-                textReplace = textPrev.replace(regExp, this.options.bearingTextOut + ': ' + angleOut + "°");
+                var textReplace = textPrev.replace(regExp, this.options.bearingTextOut + ': ' + angleOut + "°");
                 prevTooltip._icon.innerHTML = textReplace;
             }
         },
@@ -762,7 +763,7 @@
             var diffLat4849 = P49[0] - P48[0];
             var center = [P48[0] + diffLat4849/2, P48[1] + diffLng4849/2];  // center of Great-circle distance, NOT of the arc on a Mercator map! reason: a) to complicated b) map not always Mercator c) good optical feature to see where real center of distance is not the "virtual" warped arc center due to Mercator projection
                 // angle just an aprroximation, which could be somewhat off if Line runs near high latitudes. Use of *geographical coords* for line segment [48] to [49] is best method. Use of *Pixel coords* for just one arc segement [48] to [49] could create for short lines unexact rotation angles, and the use Use of Pixel coords between endpoints [0] to [98] results in even more rotation difference for high latitudes as with geogrpaphical coords-method
-            var cssAngle = -Math.atan2(diffLat4849, diffLng4849)*57.29578   // convert radiant to degree as needed for use as CSS value; cssAngle is opposite to mathematical angle.
+            var cssAngle = -Math.atan2(diffLat4849, diffLng4849)*57.29578;   // convert radiant to degree as needed for use as CSS value; cssAngle is opposite to mathematical angle.
             var iconArrow = L.divIcon ({
                 className: "",  // to avoid getting a default class with paddings and borders assigned by Leaflet
                 iconSize: [16, 16],
@@ -868,6 +869,7 @@
                         return;
                     }
                     this.circleCoords.push (mouseCoords);
+                    var currentTooltip;
                     // update polyline
                     if (this.circleCoords.length > 1) {
                         var arc = polylineState._polylineArc (lastCircleCoords, mouseCoords);
@@ -880,9 +882,9 @@
                         arrowMarker.cntLine = polylineState._currentLine.id;
                         arrowMarker.cntArrow = polylineState._cntCircle - 1;
                         polylineState._currentLine.arrowMarkers.push (arrowMarker);
-                        distanceSegment = lastCircleCoords.distanceTo (mouseCoords);
+                        var distanceSegment = lastCircleCoords.distanceTo (mouseCoords);
                         this.distance += distanceSegment;
-                        var currentTooltip = polylineState._currentLine.tooltips.last();
+                        currentTooltip = polylineState._currentLine.tooltips.last();
                         var prevTooltip = polylineState._currentLine.tooltips.slice(-1,-2)[0];
                         polylineState._updateTooltip (currentTooltip, prevTooltip, this.distance, distanceSegment, lastCircleCoords, mouseCoords);
                     }
@@ -905,7 +907,7 @@
                     polylineState._layerPaint.removeLayer (polylineState._rubberlinePath);
                     if (this.circleCoords.length > 1) {
                         this.tooltips.last()._icon.classList.add('polyline-measure-tooltip-end'); // add Class e.g. another background-color to the Previous Tooltip (which is the last fixed tooltip, cause the moving tooltip is being deleted later)
-                        var lastCircleMarker = this.circleMarkers.last()
+                        var lastCircleMarker = this.circleMarkers.last();
                         lastCircleMarker.setStyle (polylineState.options.endCircle);
                         // use Leaflet's own tooltip method to shwo a popuo tooltip if user hovers the last circle of a polyline
                         lastCircleMarker.unbindTooltip ();
@@ -925,7 +927,7 @@
             var firstTooltip = L.marker (clickCoords, {
                 icon: icon,
                 interactive: false
-            })
+            });
             firstTooltip.addTo(this._layerPaint);
             var text = '';
             if (this.options.showBearings === true) {
@@ -1023,13 +1025,13 @@
                     item.cntCircle = index;
                 });
                 this._arrPolylines[lineNr].circleCoords.splice (arrowNr+1, 0, e.latlng);
-                lineCoords = this._arrPolylines[lineNr].polylinePath.getLatLngs(); // get Coords of each Point of the current Polyline
+                var lineCoords = this._arrPolylines[lineNr].polylinePath.getLatLngs(); // get Coords of each Point of the current Polyline
                 var arc1 = this._polylineArc (this._arrPolylines[lineNr].circleCoords[arrowNr], e.latlng);
                 arc1.pop();
                 var arc2 = this._polylineArc (e.latlng, this._arrPolylines[lineNr].circleCoords[arrowNr+2]);
                 Array.prototype.splice.apply (lineCoords, [(arrowNr)*(this._arcpoints-1), this._arcpoints].concat (arc1, arc2));
                 this._arrPolylines[lineNr].polylinePath.setLatLngs (lineCoords);
-                arrowMarker = this._drawArrow (arc1);
+                var arrowMarker = this._drawArrow (arc1);
                 this._arrPolylines[lineNr].arrowMarkers[arrowNr] = arrowMarker;
                 arrowMarker = this._drawArrow (arc2);
                 this._arrPolylines[lineNr].arrowMarkers.splice(arrowNr+1,0,arrowMarker);
@@ -1053,7 +1055,7 @@
                         var lastCircleCoords = this._arrPolylines[lineNr].circleCoords[index - 1];
                         var mouseCoords = this._arrPolylines[lineNr].circleCoords[index];
                         totalDistance += distance;
-                        var prevTooltip = this._arrPolylines[lineNr].tooltips[index-1]
+                        var prevTooltip = this._arrPolylines[lineNr].tooltips[index-1];
                         this._updateTooltip (item, prevTooltip, totalDistance, distance, lastCircleCoords, mouseCoords);
                     }
                 }.bind(this));
@@ -1088,25 +1090,25 @@
             this._e1.target.setLatLng (currentCircleCoords);
             this._e1.target.unbindTooltip();    // unbind popup-tooltip cause otherwise it would be annoying during dragging, or popup instantly again if it's just closed
             this._arrPolylines[lineNr].circleCoords[circleNr] = currentCircleCoords;
-            lineCoords = this._arrPolylines[lineNr].polylinePath.getLatLngs(); // get Coords of each Point of the current Polyline
+            var lineCoords = this._arrPolylines[lineNr].polylinePath.getLatLngs(); // get Coords of each Point of the current Polyline
             if (circleNr >= 1) {   // redraw previous arc just if circle is not starting circle of polyline
-                newLineSegment1 = this._polylineArc(this._arrPolylines[lineNr].circleCoords[circleNr-1], currentCircleCoords);
+                var newLineSegment1 = this._polylineArc(this._arrPolylines[lineNr].circleCoords[circleNr-1], currentCircleCoords);
                 // the next line's syntax has to be used since Internet Explorer doesn't know new spread operator (...) for inserting the individual elements of an array as 3rd argument of the splice method; Otherwise we could write: lineCoords.splice (circleNr*(arcpoints-1), arcpoints, ...newLineSegment1);
                 Array.prototype.splice.apply (lineCoords, [(circleNr-1)*(arcpoints-1), arcpoints].concat (newLineSegment1));
-                arrowMarker = this._drawArrow (newLineSegment1);
-                arrowMarker.cntLine = lineNr;
-                arrowMarker.cntArrow = circleNr-1;
+                var arrowMarker1 = this._drawArrow (newLineSegment1);
+                arrowMarker1.cntLine = lineNr;
+                arrowMarker1.cntArrow = circleNr-1;
                 this._arrPolylines[lineNr].arrowMarkers [circleNr-1].removeFrom (this._layerPaint);
-                this._arrPolylines[lineNr].arrowMarkers [circleNr-1] = arrowMarker;
+                this._arrPolylines[lineNr].arrowMarkers [circleNr-1] = arrowMarker1;
             }
             if (circleNr < this._arrPolylines[lineNr].circleCoords.length-1) {   // redraw following arc just if circle is not end circle of polyline
-                newLineSegment2 = this._polylineArc (currentCircleCoords, this._arrPolylines[lineNr].circleCoords[circleNr+1]);
+                var newLineSegment2 = this._polylineArc (currentCircleCoords, this._arrPolylines[lineNr].circleCoords[circleNr+1]);
                 Array.prototype.splice.apply (lineCoords, [circleNr*(arcpoints-1), arcpoints].concat (newLineSegment2));
-                arrowMarker = this._drawArrow (newLineSegment2);
-                arrowMarker.cntLine = lineNr;
-                arrowMarker.cntArrow = circleNr;
+                var arrowMarker2 = this._drawArrow (newLineSegment2);
+                arrowMarker2.cntLine = lineNr;
+                arrowMarker2.cntArrow = circleNr;
                 this._arrPolylines[lineNr].arrowMarkers [circleNr].removeFrom (this._layerPaint);
-                this._arrPolylines[lineNr].arrowMarkers [circleNr] = arrowMarker;
+                this._arrPolylines[lineNr].arrowMarkers [circleNr] = arrowMarker2;
             }
             this._arrPolylines[lineNr].polylinePath.setLatLngs (lineCoords);
             if (circleNr >= 0) {     // just update tooltip position if moved circle is 2nd, 3rd, 4th etc. circle of a polyline
@@ -1120,7 +1122,7 @@
                     var lastCircleCoords = this._arrPolylines[lineNr].circleCoords[index - 1];
                     var mouseCoords = this._arrPolylines[lineNr].circleCoords[index];
                     totalDistance += distance;
-                    var prevTooltip = this._arrPolylines[lineNr].tooltips[index-1]
+                    var prevTooltip = this._arrPolylines[lineNr].tooltips[index-1];
                     this._updateTooltip (item, prevTooltip, totalDistance, distance, lastCircleCoords, mouseCoords);
                 }
             }.bind(this));
@@ -1129,6 +1131,7 @@
 
         _resumeFirstpointMousemove: function (e) {
             var lineNr = this._lineNr;
+            var currentCircleCoords;
             this._map.on ('click', this._resumeFirstpointClick, this);  // necassary for _dragCircle. If switched on already within _dragCircle an unwanted click is fired at the end of the drag.
             var mouseCoords = e.latlng;
             this._rubberlinePath2.setLatLngs (this._polylineArc (mouseCoords, currentCircleCoords));
@@ -1139,7 +1142,7 @@
             var currentCoords = this._arrPolylines[lineNr].circleCoords[0];
             totalDistance += distance;
             var prevTooltip = this._tooltipNew;
-            var currentTooltip = this._arrPolylines[lineNr].tooltips[0]
+            var currentTooltip = this._arrPolylines[lineNr].tooltips[0];
             this._updateTooltip (currentTooltip, prevTooltip, totalDistance, distance, lastCircleCoords, currentCoords);
             this._arrPolylines[lineNr].tooltips.map (function (item, index) {
                 if (index >= 1) {
@@ -1147,7 +1150,7 @@
                     var lastCircleCoords = this._arrPolylines[lineNr].circleCoords[index - 1];
                     var mouseCoords = this._arrPolylines[lineNr].circleCoords[index];
                     totalDistance += distance;
-                    var prevTooltip = this._arrPolylines[lineNr].tooltips[index-1]
+                    var prevTooltip = this._arrPolylines[lineNr].tooltips[index-1];
                     this._updateTooltip (item, prevTooltip, totalDistance, distance, lastCircleCoords, mouseCoords);
                 }
             }.bind (this));
@@ -1155,6 +1158,7 @@
 
         _resumeFirstpointClick: function (e) {
             var lineNr = this._lineNr;
+            var currentCircleCoords;
             this._resumeFirstpointFlag = false;
             this._map.off ('mousemove', this._resumeFirstpointMousemove, this);
             this._map.off ('click', this._resumeFirstpointClick, this);
@@ -1173,7 +1177,7 @@
             });
             this._arrPolylines[lineNr].circleCoords.unshift(e.latlng);
             var arc = this._polylineArc (e.latlng, currentCircleCoords);
-            arrowMarker = this._drawArrow (arc);
+            var arrowMarker = this._drawArrow (arc);
             this._arrPolylines[lineNr].arrowMarkers.unshift(arrowMarker);
             this._arrPolylines[lineNr].arrowMarkers.map (function (item, index) {
                 item.cntLine = lineNr;
@@ -1188,6 +1192,8 @@
 
         // not just used for dragging Cirles but also for deleting circles and resuming line at its starting point.
         _dragCircle: function (e1) {
+            var lineNr;
+            var text='';
             var arcpoints = this._arcpoints;
             if (e1.originalEvent.ctrlKey) {   // if user wants to resume drawing a line
                 this._map.off ('click', this._mouseClick, this); // to avoid unwanted creation of a new line if CTRL-clicked onto a point
@@ -1195,9 +1201,9 @@
                 if (e1.target.cntCircle === 0) {
                     this._resumeFirstpointFlag = true;
                     this._lineNr = e1.target.cntLine;
-                    var lineNr = this._lineNr;
+                    lineNr = this._lineNr;
                     this._circleNr = e1.target.cntCircle;
-                    currentCircleCoords = e1.latlng;
+                    var currentCircleCoords = e1.latlng;
                     this._arrPolylines[lineNr].circleMarkers [0].setStyle (this.options.currentCircle);
                     this._rubberlinePath2 = L.polyline ([], {
                         // Style of temporary, rubberline while moving the mouse
@@ -1214,8 +1220,7 @@
                         }),
                         interactive: false
                     });
-                    this._tooltipNew.addTo(this._layerPaint);
-                    var text='';
+                    this._tooltipNew.addTo(this._layerPaint);                    
                     if (this.options.showBearings === true) {
                         text = text + this.options.bearingTextIn+':---°<br>'+this.options.bearingTextOut+':---°';
                     }
@@ -1231,9 +1236,12 @@
             // if user wants to delete a circle
             if (e1.originalEvent.shiftKey) {    // it's not possible to use "ALT-Key" instead, cause this won't work in some Linux distributions (there it's the default hotkey for moving windows)
                 this._lineNr = e1.target.cntLine;
-                var lineNr = this._lineNr;
+                lineNr = this._lineNr;
                 this._circleNr = e1.target.cntCircle;
                 var circleNr = this._circleNr;
+                var lineCoords;
+                var newLineSegment;
+                var arrowMarker;
 
                 // if there is a polyline with this number in finished ones
                 if(this._arrPolylines[lineNr]) {
@@ -1269,7 +1277,7 @@
                         this._arrPolylines[lineNr].circleMarkers [0].bindTooltip (this.options.tooltipTextDraganddelete + this.options.tooltipTextResume, {direction:'top', opacity:0.7, className:'polyline-measure-popupTooltip'});
                         this._arrPolylines[lineNr].arrowMarkers [circleNr].removeFrom (this._layerPaint);
                         this._arrPolylines[lineNr].arrowMarkers.splice(0,1);
-                        var text='';
+                        text='';
                         if (this.options.showBearings === true) {
                             text = this.options.bearingTextIn+':---°<br>'+this.options.bearingTextOut+':---°';
                         }
@@ -1341,7 +1349,7 @@
 		                this._currentLine.circleMarkers [0].bindTooltip (this.options.tooltipTextDraganddelete + this.options.tooltipTextResume, {direction:'top', opacity:0.7, className:'polyline-measure-popupTooltip'});
 		                this._currentLine.arrowMarkers [circleNr].removeFrom (this._layerPaint);
 		                this._currentLine.arrowMarkers.splice(0,1);
-		                var text='';
+		                text='';
 		                if (this.options.showBearings === true) {
 			                text = this.options.bearingTextIn+':---°<br>'+this.options.bearingTextOut+':---°';
 		                }
