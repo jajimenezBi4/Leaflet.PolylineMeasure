@@ -719,7 +719,7 @@
          */
         _updateTooltip: function (currentTooltip, prevTooltip, total, difference, lastCircleCoords, mouseCoords) {
             // Explanation of formula: http://www.movable-type.co.uk/scripts/latlong.html
-            calcAngle = function (p1, p2, direction) {
+            var calcAngle = function (p1, p2, direction) {
                 var brng;
                 var lat1 = p1.lat / 180 * Math.PI;
                 var lat2 = p2.lat / 180 * Math.PI;
